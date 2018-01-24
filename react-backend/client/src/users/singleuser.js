@@ -35,8 +35,8 @@ class SingleUser extends React.Component {
         newName: newName
       })
       .then(() => {
-        this.props.updateUserName(id, newName);
-        // this.props.fetchUsers();
+        // this.props.updateUserName(id, newName);
+        this.props.fetchUsers();
         this.switchMode();
       });
   };

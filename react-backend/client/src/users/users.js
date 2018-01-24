@@ -20,21 +20,21 @@ class Users extends React.Component {
     this.fetchUsers();
   }
 
-  updateUsername = (id, newUserName) => {
-    console.log("updateUserName: id ", id, "newusername: ", newUserName);
-    const { users } = this.state;
-    const newUsers = [...users];
+  // updateUsername = (id, newUserName) => {
+  //   console.log("updateUserName: id ", id, "newusername: ", newUserName);
+  //   const { users } = this.state;
+  //   const newUsers = [...users];
 
-    newUsers.forEach(user => {
-      if (user.id === Number(id)) {
-        user.username = newUserName;
-      }
-    });
+  //   newUsers.forEach(user => {
+  //     if (user.id === Number(id)) {
+  //       user.username = newUserName;
+  //     }
+  //   });
 
-    this.setState({
-      users: newUsers
-    });
-  };
+  //   this.setState({
+  //     users: newUsers
+  //   });
+  // };
 
   renderUserList = () => {
     const { users } = this.state;
@@ -59,13 +59,7 @@ class Users extends React.Component {
     }
 
     console.log("selectedUser: ", selectedUser);
-    return (
-      <SingleUser
-        user={selectedUser}
-        updateUserName={this.updateUsername}
-        fetchUsers={this.fetchUsers}
-      />
-    );
+    return <SingleUser user={selectedUser} fetchUsers={this.fetchUsers} />;
   };
 
   render() {
