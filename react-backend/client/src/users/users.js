@@ -1,55 +1,85 @@
-import React from 'react';
-import { Route, Link, Switch } from 'react-router-dom';
-import UserList from './userlist';
-import NewUser from './newuser';
-import SingleUser from './singleuser';
+import React from "react";
+import { Route, Link } from "react-router-dom";
+import UserList from "./userlist";
+import NewUser from "./newuser";
+import SingleUser from "./singleuser";
 
 class Users extends React.Component {
-  state = { users: [] }
+  state = { users: [] };
+
+  fetchUsers = () => {
+    fetch("/users")
+      .then(res => res.json())
+      .then(users => {
+        let data = users.data;
+        this.setState({ users: data });
+      });
+  };
 
   componentDidMount() {
-    fetch('/users')
-      .then(res => res.json())
-      .then((users) => {
-        let data = users.data;
-        this.setState({ users: data })}
-      );
+    this.fetchUsers();
   }
+
+  updateUsername = (id, newUserName) => {
+    console.log("updateUserName: id ", id, "newusername: ", newUserName);
+    const { users } = this.state;
+    const newUsers = [...users];
+
+    newUsers.forEach(user => {
+      if (user.id === Number(id)) {
+        user.username = newUserName;
+      }
+    });
+
+    this.setState({
+      users: newUsers
+    });
+  };
 
   renderUserList = () => {
     const { users } = this.state;
 
+    return <UserList users={users} />;
+  };
+
+  renderUser = props => {
+    const { id } = props.match.params;
+    const { users } = this.state;
+
+    if (users.length === 0) {
+      return <div> Fetching Users... </div>;
+    }
+
+    const selectedUser = users.find(user => {
+      return user.id === Number(id);
+    });
+
+    if (!selectedUser) {
+      return <div> User not found </div>;
+    }
+
+    console.log("selectedUser: ", selectedUser);
     return (
-      <UserList users={users} />
-    )
-  }
-
-  renderUser = (props) => {
-    const { name } = props.match.params;
-    let selectedUser = "";
-
-    this.state.users.forEach((user) => {
-      if (user.username === name) {
-        selectedUser = user;
-      }
-    })
-
-    return (
-      <SingleUser user={ selectedUser } />
-    )
-  }
+      <SingleUser
+        user={selectedUser}
+        updateUserName={this.updateUsername}
+        fetchUsers={this.fetchUsers}
+      />
+    );
+  };
 
   render() {
+    console.log("<Users /> user array: ", this.state.users);
     return (
       <div className="App">
         <nav>
-          <Link to='/users'> User List </Link>
-          <Link to='/users/new'> Add New User </Link>
+          <Link to="/users"> User List </Link>
+          <Link to="/users/new"> Add New User </Link>
         </nav>
 
-        <Route exact path='/users' render={ this.renderUserList } />
-        <Route path='/users/new' component={ NewUser } />
-        <Route path='/users/:name/edit' render={ this.renderUser } />
+        <Route exact path="/users" render={this.renderUserList} />
+        <Route path="/users/new" component={NewUser} />
+        <Route path="/users/:id/edit" render={this.renderUser} />
       </div>
     );
   }

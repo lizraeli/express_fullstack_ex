@@ -1,64 +1,62 @@
-var pgp = require('pg-promise')({});
-var connectionString = 'postgres://localhost/userlist';
+var pgp = require("pg-promise")({});
+var connectionString = "postgres://localhost/userlist";
 var db = pgp(connectionString);
 
 function getAllUsers(req, res, next) {
-  db.any('select * from users')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL users'
-        });
+  db
+    .any("select * from users")
+    .then(function(data) {
+      res.status(200).json({
+        status: "success",
+        data: data,
+        message: "Retrieved ALL users"
+      });
     })
-    .catch(function (err) {
+    .catch(function(err) {
       return next(err);
     });
 }
 
 function getSingleUser(req, res, next) {
-  db.any('select * from users where username = ${username}',
-    req.params)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Fetched one user'
-        });
+  db
+    .any("select * from users where username = ${username}", req.params)
+    .then(function(data) {
+      res.status(200).json({
+        status: "success",
+        data: data,
+        message: "Fetched one user"
+      });
     })
-    .catch(function (err) {
+    .catch(function(err) {
       return next(err);
     });
 }
 
 function updateSingleUser(req, res, next) {
-  db.none('update users set username = ${newName} where username = ${username}',
-    req.body)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Changed one user'
-        });
+  db
+    .none("update users set username = ${newName} where id = ${id}", req.body)
+    .then(function(data) {
+      res.status(200).json({
+        status: "success",
+        message: "Changed one user"
+      });
     })
-    .catch(function (err) {
-      return next(err);
+    .catch(function(err) {
+      console.log("update single user error, ", err);
+      res.status(400);
     });
 }
 
 function createUser(req, res, next) {
-  db.none('insert into users(username) values(${username})',
-    req.body)
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Inserted one user'
-        });
+  db
+    .none("insert into users(username) values(${username})", req.body)
+    .then(function() {
+      res.status(200).json({
+        status: "success",
+        message: "Inserted one user"
+      });
     })
-    .catch(function (err) {
+    .catch(function(err) {
       return next(err);
     });
 }
